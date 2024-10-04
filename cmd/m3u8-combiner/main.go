@@ -14,6 +14,7 @@ var (
 	outputFormat string
 	output       string
 	verbose      bool
+	audio        bool
 )
 
 var rootCmd = &cobra.Command{
@@ -32,6 +33,7 @@ var rootCmd = &cobra.Command{
 			Sequence:     sequence,
 			OutputFormat: outputFormat,
 			Output:       output,
+			Audio:        audio,
 		}
 
 		log.L().Debug("Starting combiner",
@@ -51,6 +53,7 @@ func init() {
 	rootCmd.Flags().IntVarP(&sequence, "sequence", "s", 1, "Sequence number to append to the output file")
 	rootCmd.Flags().StringVarP(&outputFormat, "format", "f", "mp4", "Output video format (e.g., mp4, mkv)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
+	rootCmd.Flags().BoolVarP(&audio, "audio", "a", false, "Extract a separate audio file in the output")
 }
 
 func main() {

@@ -42,8 +42,6 @@ func CombineVideos(videoFiles []string, outputFile string) error {
 		return fmt.Errorf("error creating concat file: %w", err)
 	}
 
-	//  ffmpeg -f concat -safe 0 -i inputs.txt -c:v copy -c:a aac output.mp4
-
 	command := []string{"ffmpeg", "-f", "concat", "-safe", "0", "-i", concatFile, "-c:v", "copy", "-c:a", "aac", outputFile}
 	log.L().Debug("ffmpeg command", "command", strings.Join(command, " "))
 	cmd := exec.Command(command[0], command[1:]...)
@@ -78,4 +76,19 @@ func createConcatFile(videoFiles []string, concatFile string) (string, error) {
 	}
 
 	return fileName, nil
+}
+
+// Extracts the audio from a video file using ffmpeg.
+func ExtractAudio(videoOutput, outputPath string) error {
+	log.L().Debug("Extracting audio", "files", videoOutput, "output", outputPath)
+	command := []string{"ffmpeg", "-i", videoOutput, "-q:a", "0", "-map", "a", outputPath}
+	cmd := exec.Command(command[0], command[1:]...)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.L().Debug("ffmpeg output", "output", string(output))
+		return fmt.Errorf("ffmpeg error: %w", err)
+	}
+
+	return nil
 }

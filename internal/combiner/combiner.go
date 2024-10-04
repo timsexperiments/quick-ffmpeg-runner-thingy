@@ -17,6 +17,7 @@ type CombinerConfig struct {
 	Sequence     int
 	OutputFormat string
 	Output       string
+	Audio        bool
 }
 
 // Oerforms the conversion of the m3u8 file and combines the resulting video.
@@ -44,6 +45,15 @@ func RunCombiner(cfg CombinerConfig) error {
 		err := os.Remove(file)
 		if err != nil {
 			log.L().Error(fmt.Sprintf("failed to remove %s: %v", file, err))
+		}
+	}
+
+	if cfg.Audio {
+		audioFileName := fmt.Sprintf("%s/%s.wav", dir, cfg.Output)
+		err := ffmpeg.ExtractAudio(combinedFileName, audioFileName)
+		if err != nil {
+			log.L().Error(fmt.Sprintf("failed to extract audio: %v", err))
+			return err
 		}
 	}
 
